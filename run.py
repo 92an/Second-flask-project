@@ -1,7 +1,18 @@
 import os
-from flask import Flask
+from flask import Flask, redirect
 
 app = Flask(__name__)
+messages = []
+
+
+def add_message(username, message):
+    """Adds messages to the list of messages"""
+    messages.append("{0}: {1}".format(username, message))
+
+
+def get_all_messages():
+    """Get all messages sent and seperate the with <br> tag"""
+    return "<br>".join(messages)
 
 
 @app.route("/")
@@ -12,12 +23,15 @@ def index():
 
 @app.route("/<username>")
 def user(username):
-    return "Hi " + username
+    """Display chatt messages"""
+    return "<h1>Welcome, {0}</h1>{1}".format(username, get_all_messages())
 
 
 @app.route("/<username>/<message>")
 def send_message(username, message):
-    return "{0}: {1}".format(username, message)
+    """Sends messages"""
+    add_message(username, message)
+    return redirect("/" + username)
 
 
 if __name__ == "__main__":
